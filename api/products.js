@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/users');
-const Products = require('../models/products');
+const Products = require('./../models/products')
 const { checkForAuthenticationCookie } = require('../middlewares/authentication');
 
 // Apply the middleware to all routes in this router

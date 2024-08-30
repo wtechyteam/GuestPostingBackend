@@ -31,11 +31,11 @@ const userSchema = new Schema({
   buyerProfile: {
     favourites: [{
       type: Schema.Types.ObjectId,
-      ref: 'Product',  // Assuming there's a Product model
+      ref: 'Products',  // Assuming there's a Product model
     }],
     wishlist: [{
       type: Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: 'Products',
     }],
   },
   sellerProfile: {
@@ -48,7 +48,7 @@ const userSchema = new Schema({
     }],
     products: [{
       type: Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: 'Products',
     }],
     status: {
       type: String,
