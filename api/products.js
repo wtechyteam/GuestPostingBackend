@@ -48,6 +48,40 @@ router.post('/api/seller/products', async (req, res) => {
     }
 });
 
+//search for products
+router.get('/api/products/search', async (req,res) => {
+    try{
+        const {query, tags, language, country} = req.query;
+
+        const filter = {};
+
+        if (query) {
+            filter.$or = [
+                { URL: { $regex: query, $options: 'i' } },
+                { tags: { $regex: query, $options: 'i' } },
+                { language: { $regex: query, $options: 'i' } },
+                { country: { $regex: query, $options: 'i' } },
+            ];
+        }
+
+        if (tags) {
+            filter.tags = { $regex: tags, $options: 'i'};
+        }
+        if (language) {
+            filter.language = language;
+        }
+        if (country) {
+            filter.country = country;
+        }
+        const products = await Products.find(filter);
+
+        res.status(200).json(products);
+        } catch (error) {
+            res.status(500).send({ error: error.message });
+    }
+})
+
+
 // Updating a product
 router.put('/api/seller/products/:productId', async (req, res) => {
     try {

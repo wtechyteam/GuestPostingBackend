@@ -31,6 +31,9 @@ const productsSchema = new Schema({
 
 }, { timestamps: true })
 
+productsSchema.index({ URL: 'text', tags: 'text', language: 'text', country: 'text' });
+
+
 const Products = model('Products', productsSchema);
 
 module.exports =  Products;
