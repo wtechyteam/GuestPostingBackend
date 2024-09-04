@@ -7,6 +7,17 @@ const { checkForAuthenticationCookie } = require('../middlewares/authentication'
 // Apply the middleware to all routes in this router
 router.use(checkForAuthenticationCookie('token')); // Adjust the cookie name if different
 
+// Get all products from all users
+router.get('/api/products', async (req, res) => {
+    try {
+        const products = await Products.find(); // Fetch all products without any filter
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+
 // Getting all products for a seller
 router.get('/api/seller/products', async (req, res) => {
     try {
