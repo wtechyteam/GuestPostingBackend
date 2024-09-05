@@ -64,13 +64,13 @@ const productsSchema = new Schema({
         type: Number
     },
     ahrefsDRrange: {
-        type: String // Assuming DR range can be a string like "50-60" or "30-40"
+        type: String
     }
 
 }, { timestamps: true });
 
 // Adding full-text search index
-productsSchema.index({ URL: 'text', tags: 'text', language: 'text', country: 'text' });
+productsSchema.index({ URL: 'text', tags: 'text', language: 'text', country: 'text', ahrefsDRrange: 'text' });
 
 const Products = model('Products', productsSchema);
 

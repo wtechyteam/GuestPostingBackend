@@ -35,10 +35,10 @@ router.get('/api/seller/products', async (req, res) => {
 router.post('/api/seller/products', async (req, res) => {
     try {
         const { 
-            URL, tags, language, country, pricing, contentSize, links,tat,
+            URL, tags, language, country, pricing, contentSize, links,tat,ahrefsDRrange,
             contentPlacement, writingAndPlacement, completionRate, avgLifetimeOfLinks,
             ahrefsOrganicTraffic, totalTraffic, markedSponsoredBy, taskDomainPrice,
-            mozDA, semrushDA, ahrefsDRrange
+            mozDA, semrushDA, 
         } = req.body;
         // Create a new product with the logged-in user's ID as the seller
         const newProduct = new Products({
