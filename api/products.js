@@ -32,9 +32,16 @@ router.get('/api/seller/products', async (req, res) => {
 
 
 // Creating a product
+// Creating a product
 router.post('/api/seller/products', async (req, res) => {
     try {
-        const { URL, tags, language, country, pricing, contentSize, links } = req.body;
+        const { 
+            URL, tags, language, country, pricing, contentSize, links,
+            contentPlacement, writingAndPlacement, completionRate, avgLifetimeOfLinks,
+            ahrefsOrganicTraffic, totalTraffic, markedSponsoredBy, taskDomainPrice,
+            mozDA, semrushDA, ahrefsDRrange
+        } = req.body;
+        // Create a new product with the logged-in user's ID as the seller
         const newProduct = new Products({
             URL,
             tags,
@@ -43,7 +50,17 @@ router.post('/api/seller/products', async (req, res) => {
             pricing,
             contentSize,
             links,
-            sellerId: req.user.id
+            contentPlacement,
+            writingAndPlacement,
+            completionRate,
+            ahrefsOrganicTraffic,
+            totalTraffic,
+            markedSponsoredBy,
+            taskDomainPrice,
+            mozDA,
+            semrushDA,
+            ahrefsDRrange,
+            seller: req.user.id // Save the seller's ID
         });
 
         await newProduct.save();
@@ -51,13 +68,14 @@ router.post('/api/seller/products', async (req, res) => {
         const seller = await User.findById(req.user.id);
         seller.sellerProfile.products.push(newProduct._id);
         await seller.save();
-        console.log("Product created successfully")
 
+        console.log("Product created successfully");
         res.send(newProduct);
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
+
 
 //search for products
 router.get('/api/products/search', async (req,res) => {
@@ -98,25 +116,36 @@ router.put('/api/seller/products/:productId', async (req, res) => {
     try {
         const { productId } = req.params;
         const updates = req.body;
-        const product = await Products.findByIdAndUpdate(productId, updates, { new: true });
+
+        const product = await Products.findById(productId);
+
         if (!product) return res.status(404).send('Product not found');
-        res.send(product);
-        console.log("product updated successfully")
+
+        // Check if the logged-in user is the owner of the product
+        if (product.seller.toString() !== req.user.id) {
+            return res.status(403).send('Unauthorized action');
+        }
+
+        // Perform update
+        const updatedProduct = await Products.findByIdAndUpdate(productId, updates, { new: true });
+        res.send(updatedProduct);
+        console.log("Product updated successfully");
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
 
-
-//Deleting a product
+// Deleting a product
 router.delete('/api/seller/products/:productId', async (req, res) => {
     try {
         const { productId } = req.params;
+
         const product = await Products.findById(productId);
+
         if (!product) return res.status(404).send('Product not found');
-        
+
         // Check if the logged-in user is the owner of the product
-        if (product.sellerId.toString() !== req.user.id) {
+        if (product.seller.toString() !== req.user.id) {
             return res.status(403).send('Unauthorized action');
         }
 
@@ -126,6 +155,8 @@ router.delete('/api/seller/products/:productId', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
+
+
 
 
 // Getting all orders for a seller
