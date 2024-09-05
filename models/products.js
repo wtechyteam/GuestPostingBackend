@@ -19,13 +19,16 @@ const productsSchema = new Schema({
     },
     pricing: {
         type: Number,
-        required: true
+        
     },
     contentSize: {
         type: Number,
-        required: true
+        
     },
     links: {
+        type: Number
+    },
+    tat: {
         type: Number
     },
 
