@@ -32,11 +32,10 @@ router.get('/api/seller/products', async (req, res) => {
 
 
 // Creating a product
-// Creating a product
 router.post('/api/seller/products', async (req, res) => {
     try {
         const { 
-            URL, tags, language, country, pricing, contentSize, links,
+            URL, tags, language, country, pricing, contentSize, links,tat,
             contentPlacement, writingAndPlacement, completionRate, avgLifetimeOfLinks,
             ahrefsOrganicTraffic, totalTraffic, markedSponsoredBy, taskDomainPrice,
             mozDA, semrushDA, ahrefsDRrange
@@ -50,9 +49,11 @@ router.post('/api/seller/products', async (req, res) => {
             pricing,
             contentSize,
             links,
+            tat,
             contentPlacement,
             writingAndPlacement,
             completionRate,
+            avgLifetimeOfLinks,
             ahrefsOrganicTraffic,
             totalTraffic,
             markedSponsoredBy,
