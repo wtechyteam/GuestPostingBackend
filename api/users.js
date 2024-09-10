@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/users'); // Adjust the path as necessary
 
-//signup api
 router.post('/signup', async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, role } = req.body;  // Include role in destructuring
 
   try {
     const existingUser = await User.findOne({ email });
@@ -12,16 +11,18 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const newUser = new User({ fullName, email, password });
+    // Create new user with role
+    const newUser = new User({ fullName, email, password, role, contact, DOB });  // Include role when creating the user
     await newUser.save();
 
     const token = await User.matchPasswordAndGenerateToken(email, password);
     res.cookie('authToken', token, { httpOnly: true });
-    res.status(201).json({ message: 'User created successfully', token, user: { fullName: newUser.fullName, email: newUser.email } });
+    res.status(201).json({ message: 'User created successfully', token, user: { fullName: newUser.fullName, email: newUser.email, role: newUser.role, contact: newUser.contact, DOB: newUser.DOB } });
   } catch (error) {
     res.status(500).json({ message: 'Error creating user', error: error.message });
   }
 });
+
 
 //login api
 router.post('/login', async (req, res) => {
@@ -54,4 +55,29 @@ router.get('/users', async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch sellers', error: error.message });
     }
   });
+
+ //update all users api
+ router.put('/users/:id', async (req, res) => {
+  const { id } = req.params;  // Get the user ID from the URL params
+  const { fullName, email, password, role, contact, DOB } = req.body;  // Destructure fields from request body
+
+  try {
+    // Find the user by ID and update the specified fields
+    const updatedUser = await User.findByIdAndUpdate(
+      id,  // ID from params
+      { fullName, email, password, role, contact, DOB },  // Fields to update
+      { new: true, runValidators: true }  // Return the updated document and run validation
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Failed to update user', error: error.message });
+  }
+});
+ 
 module.exports = router;
