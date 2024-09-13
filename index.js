@@ -28,6 +28,7 @@ const getAllProducts = require('./api/products')
 const searchProducts = require('./api/products')
 const ordersRouter = require('./api/orders')
 const rapidapi = require('./api/rapidAPI')
+
 app.use('/api', signupRoute)
 app.use('/api', loginRoute)
 app.use('/api', logoutRoute)
@@ -36,16 +37,11 @@ app.use('/api', getAllProducts)
 app.use('/api', searchProducts)
 app.use('/api', ordersRouter)
 app.use('/api', rapidapi)
+
 app.get('/test', (req, res) => {
   console.log('Request User:', req.user); // Check if user is set
   res.send(req.user ? req.user : 'No user found');
 });
-
-
-//database setup
-mongoose.connect('mongodb://127.0.0.1/GuestPosting')
-.then(() => console.log("MongoDB connected"))
-  .catch(err => console.error(err));
 
 //error handling middleware
   app.use((err, req, res, next) => {
@@ -53,6 +49,10 @@ mongoose.connect('mongodb://127.0.0.1/GuestPosting')
     res.status(500).json({ message: 'Something broke!', error: err.message });
   });
   
+//database setup
+mongoose.connect('mongodb://127.0.0.1/GuestPosting')
+.then(() => console.log("MongoDB connected"))
+  .catch(err => console.error(err));  
   
-  // Start server
+// Start server
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

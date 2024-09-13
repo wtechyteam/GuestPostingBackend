@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/users'); // Adjust the path as necessary
+const User = require('../models/users'); 
 
+//signup
 router.post('/signup', async (req, res) => {
-  const { fullName, email, password, role } = req.body;  // Include role in destructuring
+  const { fullName, email, password, role } = req.body; 
 
   try {
     const existingUser = await User.findOne({ email });
@@ -11,8 +12,8 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create new user with role
-    const newUser = new User({ fullName, email, password, role, contact, DOB });  // Include role when creating the user
+    // Create new user 
+    const newUser = new User({ fullName, email, password, role, contact, DOB }); 
     await newUser.save();
 
     const token = await User.matchPasswordAndGenerateToken(email, password);
@@ -58,15 +59,14 @@ router.get('/users', async (req, res) => {
 
  //update all users api
  router.put('/users/:id', async (req, res) => {
-  const { id } = req.params;  // Get the user ID from the URL params
-  const { fullName, email, password, role, contact, DOB } = req.body;  // Destructure fields from request body
+  const { id } = req.params; 
+  const { fullName, email, password, role, contact, DOB } = req.body;  
 
   try {
-    // Find the user by ID and update the specified fields
     const updatedUser = await User.findByIdAndUpdate(
-      id,  // ID from params
-      { fullName, email, password, role, contact, DOB },  // Fields to update
-      { new: true, runValidators: true }  // Return the updated document and run validation
+      id,
+      { fullName, email, password, role, contact, DOB },
+      { new: true, runValidators: true }
     );
 
     if (!updatedUser) {

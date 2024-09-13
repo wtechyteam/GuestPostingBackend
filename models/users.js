@@ -40,7 +40,7 @@ const userSchema = new Schema(
       favourites: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Products", // Assuming there's a Product model
+          ref: "Products", // reference to the Product model
         },
       ],
       wishlist: [

@@ -3,9 +3,7 @@ const router = express.Router();
 const User = require("../models/users");
 const Product = require("./../models/products");
 const Order = require("./../models/orders");
-const {
-  checkForAuthenticationCookie,
-} = require("./../middlewares/authentication");
+const { checkForAuthenticationCookie } = require("./../middlewares/authentication");
 
 router.post("/orders", checkForAuthenticationCookie("authToken"), async (req, res) => {
     try {
@@ -45,13 +43,13 @@ router.post("/orders", checkForAuthenticationCookie("authToken"), async (req, re
 
       // Optionally update buyer's order history
       if (!buyer.buyerProfile) {
-        buyer.buyerProfile = { orders: [] }; // Ensure this structure exists
+        buyer.buyerProfile = { orders: [] }; 
       }
       buyer.buyerProfile.orders.push(newOrder._id);
 
       // Optionally update seller's order history
       if (!seller.sellerProfile) {
-        seller.sellerProfile = { orders: [] }; // Ensure this structure exists
+        seller.sellerProfile = { orders: [] }; 
       }
       seller.sellerProfile.orders.push(newOrder._id);
 

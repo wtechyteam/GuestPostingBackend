@@ -36,8 +36,6 @@ const productsSchema = new Schema({
     tat: {
         type: Number
     },
-
-    // New fields
     contentPlacement: {
         type: Number
     },

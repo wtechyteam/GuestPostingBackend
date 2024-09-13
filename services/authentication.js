@@ -9,7 +9,7 @@ const createTokenForUser = (user) => {
     };
   
     const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-    console.log('Generated User Token service:', token); // Debug log
+    console.log('Generated User Token service:', token); 
     return token;
   };
   

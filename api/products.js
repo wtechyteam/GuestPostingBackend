@@ -6,12 +6,12 @@ const { checkForAuthenticationCookie } = require('../middlewares/authentication'
 const {addToWishlist, removeFromWishlist, getWishlist} = require('./../controllers/wishlistController')
 
 // Apply the middleware to all routes in this router
-router.use(checkForAuthenticationCookie('token')); // Adjust the cookie name if different
+router.use(checkForAuthenticationCookie('token')); 
 
 // Get all products from all users
 router.get('/products', async (req, res) => {
     try {
-        const products = await Products.find(); // Fetch all products without any filter
+        const products = await Products.find();
         res.status(200).json(products);
     } catch (error) {
         res.status(500).send({ error: error.message });
@@ -22,7 +22,7 @@ router.get('/products', async (req, res) => {
 // Getting all products for a seller
 router.get('/seller/products', async (req, res) => {
     try {
-        console.log('Request User:', req.user); // Log to see if _id is present
+        console.log('Request User:', req.user); 
         const seller = await User.findById(req.user.id).populate('sellerProfile.products');
         if (!seller) return res.status(404).send('Seller not found');
         res.send(seller.sellerProfile.products);
@@ -41,7 +41,7 @@ router.post('/seller/products', async (req, res) => {
             ahrefsOrganicTraffic, totalTraffic, markedSponsoredBy, taskDomainPrice,
             mozDA, semrushDA, 
         } = req.body;
-        // Create a new product with the logged-in user's ID as the seller
+        
         const newProduct = new Products({
             URL,
             tags,
@@ -62,7 +62,7 @@ router.post('/seller/products', async (req, res) => {
             mozDA,
             semrushDA,
             ahrefsDRrange,
-            seller: req.user.id // Save the seller's ID
+            seller: req.user.id 
         });
 
         await newProduct.save();
@@ -123,12 +123,10 @@ router.put('/seller/products/:productId', async (req, res) => {
 
         if (!product) return res.status(404).send('Product not found');
 
-        // Check if the logged-in user is the owner of the product
         if (product.seller.toString() !== req.user.id) {
             return res.status(403).send('Unauthorized action');
         }
 
-        // Perform update
         const updatedProduct = await Products.findByIdAndUpdate(productId, updates, { new: true });
         res.send(updatedProduct);
         console.log("Product updated successfully");
@@ -146,7 +144,6 @@ router.delete('/seller/products/:productId', async (req, res) => {
 
         if (!product) return res.status(404).send('Product not found');
 
-        // Check if the logged-in user is the owner of the product
         if (product.seller.toString() !== req.user.id) {
             return res.status(403).send('Unauthorized action');
         }
