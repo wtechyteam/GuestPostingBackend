@@ -3,12 +3,13 @@ const router = express.Router();
 const User = require('../models/users');
 const Products = require('./../models/products')
 const { checkForAuthenticationCookie } = require('../middlewares/authentication');
+const {addToWishlist, removeFromWishlist, getWishlist} = require('./../controllers/wishlistController')
 
 // Apply the middleware to all routes in this router
 router.use(checkForAuthenticationCookie('token')); // Adjust the cookie name if different
 
 // Get all products from all users
-router.get('/api/products', async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
         const products = await Products.find(); // Fetch all products without any filter
         res.status(200).json(products);
@@ -19,7 +20,7 @@ router.get('/api/products', async (req, res) => {
 
 
 // Getting all products for a seller
-router.get('/api/seller/products', async (req, res) => {
+router.get('/seller/products', async (req, res) => {
     try {
         console.log('Request User:', req.user); // Log to see if _id is present
         const seller = await User.findById(req.user.id).populate('sellerProfile.products');
@@ -32,7 +33,7 @@ router.get('/api/seller/products', async (req, res) => {
 
 
 // Creating a product
-router.post('/api/seller/products', async (req, res) => {
+router.post('/seller/products', async (req, res) => {
     try {
         const { 
             URL, tags, language, country, pricing, contentSize, links,tat,ahrefsDRrange,
@@ -79,7 +80,7 @@ router.post('/api/seller/products', async (req, res) => {
 
 
 //search for products
-router.get('/api/products/search', async (req,res) => {
+router.get('/products/search', async (req,res) => {
     try{
         const {query, tags, language, country} = req.query;
 
@@ -113,7 +114,7 @@ router.get('/api/products/search', async (req,res) => {
 
 
 // Updating a product
-router.put('/api/seller/products/:productId', async (req, res) => {
+router.put('/seller/products/:productId', async (req, res) => {
     try {
         const { productId } = req.params;
         const updates = req.body;
@@ -137,7 +138,7 @@ router.put('/api/seller/products/:productId', async (req, res) => {
 });
 
 // Deleting a product
-router.delete('/api/seller/products/:productId', async (req, res) => {
+router.delete('/seller/products/:productId', async (req, res) => {
     try {
         const { productId } = req.params;
 
@@ -161,7 +162,7 @@ router.delete('/api/seller/products/:productId', async (req, res) => {
 
 
 // Getting all orders for a seller
-router.get('/api/seller/orders', async (req, res) => {
+router.get('/seller/orders', async (req, res) => {
     try {
         const seller = await User.findById(req.user.id).populate('sellerProfile.orders');
         if (!seller) return res.status(404).send('Seller not found');
@@ -170,5 +171,11 @@ router.get('/api/seller/orders', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
+
+router.post('/wishlist/:productId', checkForAuthenticationCookie('authToken'), addToWishlist);
+
+router.delete('/wishlist/:productId', checkForAuthenticationCookie('authToken'), removeFromWishlist);
+
+router.get('/wishlist', checkForAuthenticationCookie('authToken'), getWishlist);
 
 module.exports = router;

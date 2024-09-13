@@ -7,10 +7,7 @@ const {
   checkForAuthenticationCookie,
 } = require("./../middlewares/authentication");
 
-router.post(
-  "/orders",
-  checkForAuthenticationCookie("authToken"),
-  async (req, res) => {
+router.post("/orders", checkForAuthenticationCookie("authToken"), async (req, res) => {
     try {
       const { productId, quantity } = req.body;
 
@@ -46,7 +43,6 @@ router.post(
       console.log("Seller Profile before Push:", seller.sellerProfile);
       console.log("Buyer Profile before Push:", buyer.buyerProfile);
 
-
       // Optionally update buyer's order history
       if (!buyer.buyerProfile) {
         buyer.buyerProfile = { orders: [] }; // Ensure this structure exists
@@ -65,17 +61,15 @@ router.post(
       });
     } catch (error) {
       console.error("Error placing order:", error);
-      res
-        .status(500)
-        .json({
-          message: "Server error while placing order",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Server error while placing order",
+        error: error.message,
+      });
     }
   }
 );
 
-router.get("/api/orders", async (req, res) => {
+router.get("/orders", async (req, res) => {
   try {
     const orders = await Order.find().populate("buyer seller products");
     res.status(200).json(orders);
@@ -84,7 +78,7 @@ router.get("/api/orders", async (req, res) => {
   }
 });
 
-router.get("/api/orders/buyer/:buyerId", async (req, res) => {
+router.get("orders/buyer/:buyerId", async (req, res) => {
   try {
     const { buyerId } = req.params;
     const orders = await Order.find({ buyer: buyerId }).populate(
@@ -101,7 +95,7 @@ router.get("/api/orders/buyer/:buyerId", async (req, res) => {
   }
 });
 
-router.get("/api/orders/seller/:sellerId", async (req, res) => {
+router.get("/orders/seller/:sellerId", async (req, res) => {
   try {
     const { sellerId } = req.params;
     const orders = await Order.find({ seller: sellerId }).populate(

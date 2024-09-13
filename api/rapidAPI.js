@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-router.get('/api/semrush-traffic', async (req, res) => {
+router.get('/semrush-traffic', async (req, res) => {
     const { domain } = req.query;  // Get domain from the request query
 
     try {
@@ -27,7 +27,7 @@ router.get('/api/semrush-traffic', async (req, res) => {
     }
 });
 
-router.get('/api/ahrefs-data', async (req, res) => {
+router.get('/ahrefs-data', async (req, res) => {
     const { domain } = req.query;  // Get domain from the request query
     const { url } = req.query;
 
@@ -53,7 +53,7 @@ router.get('/api/ahrefs-data', async (req, res) => {
     }
 });
 
-router.get('/api/seo-api', async (req, res) => {
+router.get('/seo-api', async (req, res) => {
     const { domain } = req.query;  // Get domain from the request query
     try {
         // Make a request to the Ahrefs API on RapidAPI
@@ -77,7 +77,7 @@ router.get('/api/seo-api', async (req, res) => {
     }
 });
 
-router.get('/api/moz-da', async (req, res) => {
+router.get('/moz-da', async (req, res) => {
     const { domain } = req.query;  // Get domain from the request query
     try {
         // Make a request to the Ahrefs API on RapidAPI
@@ -101,7 +101,7 @@ router.get('/api/moz-da', async (req, res) => {
     }
 });
 
-router.get('/api/majestic-data', async (req, res) => {
+router.get('/majestic-data', async (req, res) => {
     const { url } = req.query;  // Get URL from the request query parameter
 
     try {
