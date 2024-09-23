@@ -4,7 +4,7 @@ const User = require('../models/users');
 
 //signup
 router.post('/signup', async (req, res) => {
-  const { fullName, email, password, role } = req.body; 
+  const { fullName, email, password, role, location } = req.body; 
 
   try {
     const existingUser = await User.findOne({ email });
@@ -13,12 +13,12 @@ router.post('/signup', async (req, res) => {
     }
 
     // Create new user 
-    const newUser = new User({ fullName, email, password, role, contact, DOB }); 
+    const newUser = new User({ fullName, email, password, role, contact, DOB, location}); 
     await newUser.save();
 
     const token = await User.matchPasswordAndGenerateToken(email, password);
     res.cookie('authToken', token, { httpOnly: true });
-    res.status(201).json({ message: 'User created successfully', token, user: { fullName: newUser.fullName, email: newUser.email, role: newUser.role, contact: newUser.contact, DOB: newUser.DOB } });
+    res.status(201).json({ message: 'User created successfully', token, user: { fullName: newUser.fullName, email: newUser.email, role: newUser.role, contact: newUser.contact, DOB: newUser.DOB, location: newUser.location } });
   } catch (error) {
     res.status(500).json({ message: 'Error creating user', error: error.message });
   }
@@ -60,12 +60,12 @@ router.get('/users', async (req, res) => {
  //update all users api
  router.put('/users/:id', async (req, res) => {
   const { id } = req.params; 
-  const { fullName, email, password, role, contact, DOB } = req.body;  
+  const { fullName, email, password, role, contact, DOB, location } = req.body;  
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { fullName, email, password, role, contact, DOB },
+      { fullName, email, password, role, contact, DOB, location },
       { new: true, runValidators: true }
     );
 
@@ -81,3 +81,5 @@ router.get('/users', async (req, res) => {
 });
  
 module.exports = router;
+
+//patch request pending

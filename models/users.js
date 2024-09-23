@@ -19,6 +19,9 @@ const userSchema = new Schema(
     DOB: {
       type: Date,
     },
+    location: {
+      type: String,
+    },
     salt: {
       type: String,
     },
