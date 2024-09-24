@@ -4,7 +4,7 @@ const User = require('../models/users');
 
 //signup
 router.post('/signup', async (req, res) => {
-  const { fullName, email, password, role, location } = req.body; 
+  const { fullName, email, password, role, location, contact, DOB } = req.body; 
 
   try {
     const existingUser = await User.findOne({ email });
