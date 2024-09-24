@@ -56,6 +56,17 @@ router.get('/users', async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch sellers', error: error.message });
     }
   });
+//getting a single user
+  router.get('/users/:id', async (req, res) => {
+    try {
+      const {id} = req.params 
+      const user = await User.findById(id);
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error fetching sellers:', error);
+      res.status(500).json({ message: 'Failed to fetch sellers', error: error.message });
+    }
+  });
 
  //update all users api
  router.put('/users/:id', async (req, res) => {
