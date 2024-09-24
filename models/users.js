@@ -72,6 +72,12 @@ const userSchema = new Schema(
         default: "PENDING",
       },
     },
+    blockedProducts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Products', 
+      },
+    ],
   },
   { timestamps: true }
 );

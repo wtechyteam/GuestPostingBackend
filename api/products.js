@@ -4,7 +4,7 @@ const User = require('../models/users');
 const Products = require('./../models/products')
 const { checkForAuthenticationCookie } = require('../middlewares/authentication');
 const {addToWishlist, removeFromWishlist, getWishlist} = require('./../controllers/wishlistController')
-
+const {blockProduct, unblockProduct} = require('./../controllers/blocklistController')
 // Apply the middleware to all routes in this router
 router.use(checkForAuthenticationCookie('token')); 
 
@@ -169,10 +169,17 @@ router.get('/seller/orders', async (req, res) => {
     }
 });
 
+//wishlist products api
 router.post('/wishlist/:productId', checkForAuthenticationCookie('authToken'), addToWishlist);
 
 router.delete('/wishlist/:productId', checkForAuthenticationCookie('authToken'), removeFromWishlist);
 
 router.get('/wishlist', checkForAuthenticationCookie('authToken'), getWishlist);
+
+//Block a product API
+router.post('/block/:productId', checkForAuthenticationCookie('authToken'), blockProduct)
+
+//Unblock a product API
+router.post('/unblock/:productId', checkForAuthenticationCookie('authToken'), unblockProduct)
 
 module.exports = router;
