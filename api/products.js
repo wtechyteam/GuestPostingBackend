@@ -9,7 +9,7 @@ const {addToWishlist, removeFromWishlist, getWishlist} = require('./../controlle
 router.use(checkForAuthenticationCookie('token')); 
 
 // Get all products from all users
-router.get('/api/products', async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
         const products = await Products.find();
         res.status(200).json(products);
