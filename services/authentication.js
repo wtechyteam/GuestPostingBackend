@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secret = 'Wtechy@123'; //confidential
+const secret = process.env.SECRET_KEY; //confidential
 
 const createTokenForUser = (user) => {
     const payload = {
