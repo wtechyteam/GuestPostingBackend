@@ -159,7 +159,8 @@ router.delete('/seller/products/:productId', async (req, res) => {
 
 
 // Getting all orders for a seller
-router.get('/seller/orders', async (req, res) => {
+router.get('/seller/orders', checkForAuthenticationCookie('authToken'), async (req, res) => {
+    console.log('Authenticated User:', req.user);
     try {
         const seller = await User.findById(req.user.id).populate('sellerProfile.orders');
         if (!seller) return res.status(404).send('Seller not found');

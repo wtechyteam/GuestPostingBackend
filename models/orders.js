@@ -26,8 +26,8 @@ const orderSchema = new Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-        default: 'pending'
+        enum: ['Publisher Acceptance', 'In Progress', 'Your Approval', 'Improvement', 'Completed', 'Rejected', 'Archived'],
+        default: 'In Progress'
     },
     paymentStatus: {
         type: String,

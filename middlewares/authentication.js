@@ -1,10 +1,11 @@
 const { validateToken} = require("../services/authentication");
 
-function checkForAuthenticationCookie(cookieName) {
+function checkForAuthenticationCookie(authToken) {
   return (req, res, next) => {
-    const tokenCookieValue = req.cookies[cookieName];
+    const tokenCookieValue = req.cookies.authToken;
     if (!tokenCookieValue) {
       console.log('No token found in cookies');
+      console.log(req.cookies.authToken)
       return next(); 
     }
     try {

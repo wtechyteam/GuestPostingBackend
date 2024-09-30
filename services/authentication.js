@@ -15,7 +15,7 @@ const createTokenForUser = (user) => {
   
   const validateToken = (token) => {
   try {
-    return jwt.verify(token, secret); // Decode token and return payload
+    return jwt.verify(token, secret); 
   } catch (error) {
     throw new Error('Invalid token');
   }

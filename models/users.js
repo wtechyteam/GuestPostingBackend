@@ -103,7 +103,7 @@ userSchema.methods.comparePassword = function (password) {
     .update(password)
     .digest("hex");
 
-  return this.password === userProvidedHash;
+  return this.password === userProvidedHash; 
 };
 
 // Define instance method to generate auth token

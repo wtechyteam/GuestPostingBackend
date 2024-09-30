@@ -4,6 +4,7 @@ const Product = require('./../models/products');
 // Add product to wishlist
 exports.addToWishlist = async (req, res) => {
     const userId = req.user.id; 
+    
     const { productId } = req.params;
 
     try {
@@ -64,6 +65,11 @@ exports.removeFromWishlist = async (req, res) => {
 // Get user's wishlist
 exports.getWishlist = async (req, res) => {
     const userId = req.user.id;  
+    console.log('Authenticated User:', req.user);
+
+    // if (req.user.role !== 'BUYER') { // Ensure only buyers can access this
+    //     return res.status(403).json({ message: 'Access denied, only buyers can access wishlist' });
+    // }
 
     try {
         const user = await User.findById(userId).populate('buyerProfile.wishlist');

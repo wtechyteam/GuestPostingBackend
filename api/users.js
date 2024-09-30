@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
     const newUser = new User({ fullName, email, password, role, contact, DOB, location}); 
     await newUser.save();
 
-    const token = await User.matchPasswordAndGenerateToken(email, password);
+    const {token} = await User.matchPasswordAndGenerateToken(email, password);
     res.cookie('authToken', token, { httpOnly: true });
     res.status(201).json({ message: 'User created successfully', token, user: { fullName: newUser.fullName, email: newUser.email, role: newUser.role, contact: newUser.contact, DOB: newUser.DOB, location: newUser.location } });
   } catch (error) {
@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
     const { email, password, _id } = req.body;
   
     try {
-      const token = await User.matchPasswordAndGenerateToken(email, password);
+      const {token} = await User.matchPasswordAndGenerateToken(email, password);
       const user = await User.findOne({ email });
       res.cookie('authToken', token, { httpOnly: true });
       res.status(200).json({ message: 'Login successful', token, user: { fullName: user.fullName, email: user.email, _id: user._id } });
