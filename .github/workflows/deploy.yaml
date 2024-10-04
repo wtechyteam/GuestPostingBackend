@@ -27,5 +27,5 @@ jobs:
         cd /var/www/api.advertpulse.com && \
         git pull origin main && \
         npm install && \
-        p2 reload api.advertpulse.com && \
+        pm2 reload api.advertpulse.com && \
         echo 'Deployment successful'" || echo 'Deployment failed'
