@@ -6,7 +6,7 @@ on:
       - main  # Trigger deployment only on push to the main branch
 
 jobs:
-  deploy_to_devapp:
+  deploy_to_devapi:
     if: github.ref == 'refs/heads/main'  # Ensure job runs only on push to main
     runs-on: ubuntu-latest
 
