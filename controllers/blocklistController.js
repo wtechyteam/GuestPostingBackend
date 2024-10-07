@@ -90,3 +90,19 @@ exports.unblockProduct = async (req, res) => {
     return res.status(500).json({ message: 'Error unblocking product.', error: error.message });
   }
 };
+
+exports.getBlockedProducts =  async (req,res) => {
+  const userId = req.user.id;
+
+  try {
+    // Find the user and populate the blockedProducts
+    const user = await User.findById(userId).populate('blockedProducts');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ blockedProducts: user.blockedProducts });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching blocked products', error: err.message });
+  }
+}
