@@ -13,7 +13,7 @@ function checkForAuthenticationCookie() {
       }
     }
 
-    // If no token found in both cookies and headers, log and proceed
+    // If no token found in both cookies and headers, log and proceed forward
     if (!token) {
       console.log('No token found in cookies or headers');
       return next(); 
