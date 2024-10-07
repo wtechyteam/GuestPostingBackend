@@ -11,7 +11,7 @@ require('dotenv').config();
 const app = express();
 
 //Port setup
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 
 //Middlewares
 const { checkForAuthenticationCookie } = require('./middlewares/authentication');
@@ -59,4 +59,4 @@ mongoose.connect(process.env.MONGO_URL)
   .catch(err => console.error(err));  
   
 // Start server
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen( PORT, () => console.log(`Server running on port ${PORT}`));
