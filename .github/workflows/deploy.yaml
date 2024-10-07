@@ -1,0 +1,31 @@
+name: Deploy to api.advertpulse.com
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment only on push to the main branch
+
+jobs:
+  deploy_to_devapi:
+    if: github.ref == 'refs/heads/main'  # Ensure job runs only on push to main
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install SSH Pass
+      run: sudo apt-get install sshpass -y
+
+    - name: SSH and Deploy
+      env:
+        SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SSH_USER: ${{ secrets.SSH_USER }}
+      run: |
+        sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP "
+        cd /var/www/api.advertpulse.com && \
+        git pull origin main && \
+        npm install && \
+        pm2 reload api.advertpulse.com && \
+        echo 'Deployment successful'" || echo 'Deployment failed'
