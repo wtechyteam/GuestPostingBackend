@@ -1,108 +1,95 @@
 const User = require('./../models/users');  
 const Product = require('./../models/products');
 const mongoose = require('mongoose');
+const blockedProducts = require('./../models/blockedProducts')
 
 // Block a Product for the User
 exports.blockProduct = async (req, res) => {
   try {
-    // Extract the user ID from the request (ensure req.user is populated correctly)
-    const userId = req.user ? req.user.id : null;
-    console.log("User ID:", userId);
-
-    // Check if user ID is present
-    if (!userId) {
-      return res.status(400).json({ message: 'User not authenticated.' });
-    }
-
-    // Extract the product ID from the request parameters
-    const productId = req.params.productId;
-    console.log("Product ID to block:", productId);
-
-    // Validate product ID format
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ message: 'Invalid product ID.' });
-    }
-
-    // Find the user based on the ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
+    const { productId } = req.params;
+    const userId = req.user.id;
 
     // Check if the product is already blocked
-    if (user.blockedProducts.includes(productId)) {
+    const isAlreadyBlocked = await blockedProducts.findOne({ userId, productId });
+
+    if (isAlreadyBlocked) {
       return res.status(400).json({ message: 'Product is already blocked.' });
     }
 
-    // Block the product and save the user data
-    user.blockedProducts.push(productId);
-    await user.save();
+    // Create a new blocked product entry
+    const newBlockedProduct = new blockedProducts({ userId, productId });
+    await newBlockedProduct.save();
 
-    console.log("Product blocked successfully for user:", userId);
-    return res.status(200).json({ message: 'Product blocked successfully.' });
+    res.status(200).json({ message: 'Product blocked successfully.', productId });
   } catch (error) {
     console.error("Error blocking product:", error);
-    return res.status(500).json({ message: 'Error blocking product.', error: error.message });
+    res.status(500).json({ message: 'Failed to block product.' });
   }
 };
 
 // Unblock a Product for the User
 exports.unblockProduct = async (req, res) => {
   try {
-    // Extract the user ID from the request
-    const userId = req.user ? req.user.id : null;
-    console.log("User ID:", userId);
+    const { productId } = req.params;
+    const userId = req.user.id;
 
-    // Check if user ID is present
-    if (!userId) {
-      return res.status(400).json({ message: 'User not authenticated.' });
-    }
+    // Find and delete the blocked product entry
+    const unblockedProduct = await blockedProducts.findOneAndDelete({ userId, productId });
 
-    // Extract the product ID from the request parameters
-    const productId = req.params.productId;
-    console.log("Product ID to unblock:", productId);
-
-    // Validate product ID format
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ message: 'Invalid product ID.' });
-    }
-
-    // Find the user based on the ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
-    // Check if the product is in the blocked list
-    const productIndex = user.blockedProducts.indexOf(productId);
-    if (productIndex === -1) {
+    if (!unblockedProduct) {
       return res.status(400).json({ message: 'Product is not blocked.' });
     }
 
-    // Unblock the product by removing it from the array
-    user.blockedProducts.splice(productIndex, 1);
-    await user.save();
-
-    console.log("Product unblocked successfully for user:", userId);
-    return res.status(200).json({ message: 'Product unblocked successfully.' });
+    return res.status(200).json({ message: 'Product unblocked successfully.', productId });
   } catch (error) {
     console.error("Error unblocking product:", error);
-    return res.status(500).json({ message: 'Error unblocking product.', error: error.message });
+    return res.status(500).json({ message: 'Failed to unblock product.' });
   }
 };
 
-exports.getBlockedProducts =  async (req,res) => {
-  const userId = req.user.id;
-
+// Get all blocked products for the logged-in user
+exports.getBlockedProducts = async (req, res) => {
   try {
-    // Find the user and populate the blockedProducts
-    const user = await User.findById(userId).populate('blockedProducts');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Extract user ID from the request
+    const userId = req.user.id;
+
+    const getBlockProducts = await blockedProducts.find({ userId })
+      .populate('productId') 
+
+    // If no blocked products are found, return an empty array
+    if (!getBlockProducts) {
+      return res.status(404).json({ message: 'No blocked products found.' });
     }
 
-    res.status(200).json({ blockedProducts: user.blockedProducts });
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching blocked products', error: err.message });
+    const blockProducts = getBlockProducts.map((entry) => entry.productId)
+
+    // Return the blocked products
+    res.status(200).json(blockProducts);
+  } catch (error) {
+    console.error("Error fetching blocked products:", error);
+    return res.status(500).json({ message: 'Failed to fetch blocked products.', error: error.message });
   }
-}
+};
+
+// Get all unblocked products for the logged-in user
+exports.getUnblockedProducts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Fetch all products
+    const allProducts = await Product.find();
+
+    // Get the blocked products for the user
+    const blockedProductsList = await blockedProducts.find({ userId });
+    const blockedProductIds = blockedProductsList.map((entry) => entry.productId.toString());
+
+    // Filter out the blocked products
+    const unblockedProducts = allProducts.filter((product) => !blockedProductIds.includes(product._id.toString()));
+
+    // Return the unblocked products
+    res.status(200).json(unblockedProducts);
+  } catch (error) {
+    console.error("Error fetching unblocked products:", error);
+    return res.status(500).json({ message: 'Failed to fetch unblocked products.', error: error.message });
+  }
+};

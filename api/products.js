@@ -177,13 +177,13 @@ router.delete('/wishlist/:productId', checkForAuthenticationCookie('authToken'),
 
 router.get('/wishlist', checkForAuthenticationCookie('authToken'), getWishlist);
 
-//Block a product API
-router.post('/block/:productId', checkForAuthenticationCookie('authToken'), blockProduct)
+// //Block a product API
+// router.post('/block/:productId', checkForAuthenticationCookie('authToken'), blockProduct)
 
-//Unblock a product API
-router.post('/unblock/:productId', checkForAuthenticationCookie('authToken'), unblockProduct)
+// //Unblock a product API
+// router.post('/unblock/:productId', checkForAuthenticationCookie('authToken'), unblockProduct)
 
-//get all blocked products
-router.get('/blockedProducts', checkForAuthenticationCookie('authToken'), getBlockedProducts)
+// //get all blocked products
+// router.get('/blockedProducts', checkForAuthenticationCookie('authToken'), getBlockedProducts)
 
 module.exports = router;
