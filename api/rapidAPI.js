@@ -76,18 +76,17 @@ router.get('/moz-da', async (req, res) => {
         const response = await axios({
             method: 'GET',
             url: `https://moz-da-pa-spam-score.p.rapidapi.com/dapa?domain=${domain}`,
-            params: {
-                target: domain
-            },
             headers: {
                 'X-RapidAPI-Key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
                 'X-RapidAPI-Host': 'moz-da-pa-spam-score.p.rapidapi.com'
             }
         });
+
+        console.log('API Response:', response.data); // Log the API response to inspect the format
         res.status(200).json(response.data);
     } catch (error) {
-        console.error('Error fetching moz-da data:', error);
-        res.status(500).json({ error: 'Failed to fetch Ahrefs data' });
+        console.error('Error fetching moz-da data:', error.response ? error.response.data : error.message);
+        res.status(500).json({ error: error.response ? error.response.data : 'Failed to fetch Moz DA data' });
     }
 });
 

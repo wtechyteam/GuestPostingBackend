@@ -170,12 +170,12 @@ router.get('/seller/orders', checkForAuthenticationCookie('authToken'), async (r
     }
 });
 
-//wishlist products api
-router.post('/wishlist/:productId', checkForAuthenticationCookie('authToken'), addToWishlist);
+// //wishlist products api
+// router.post('/wishlist/:productId', checkForAuthenticationCookie('authToken'), addToWishlist);
 
-router.delete('/wishlist/:productId', checkForAuthenticationCookie('authToken'), removeFromWishlist);
+// router.delete('/wishlist/:productId', checkForAuthenticationCookie('authToken'), removeFromWishlist);
 
-router.get('/wishlist', checkForAuthenticationCookie('authToken'), getWishlist);
+// router.get('/wishlist', checkForAuthenticationCookie('authToken'), getWishlist);
 
 // //Block a product API
 // router.post('/block/:productId', checkForAuthenticationCookie('authToken'), blockProduct)

@@ -46,12 +46,6 @@ const userSchema = new Schema(
           ref: "Products", // reference to the Product model
         },
       ],
-      wishlist: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Products",
-        },
-      ],
       orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
     },
     sellerProfile: {

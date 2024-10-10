@@ -32,6 +32,7 @@ const searchProducts = require('./api/products')
 const ordersRouter = require('./api/orders')
 const rapidapi = require('./api/rapidAPI')
 const blockedProduct = require('./api/blockedProducts')
+const wishlistRoute = require('./api/wishlistRoutes')
 
 
 app.use('/api', signupRoute)
@@ -43,6 +44,7 @@ app.use('/api', searchProducts)
 app.use('/api', ordersRouter)
 app.use('/api', rapidapi)
 app.use('/api', blockedProduct)
+app.use('/api', wishlistRoute)
 
 app.get('/test', (req, res) => {
   console.log('Request User:', req.user); // Check if user is set

@@ -15,7 +15,9 @@ const blockedProductsSchema = new Schema ({
         type: Date,
         default: Date.now,
       },
-})
+},
+{timestamps: true}
+);
 
 const blockedProducts = model('blockedProducts', blockedProductsSchema);
 module.exports = blockedProducts;
