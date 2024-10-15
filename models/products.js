@@ -51,7 +51,7 @@ const productsSchema = new Schema({
     ahrefsOrganicTraffic: {
         type: Number
     },
-    totalTraffic: {
+    majestic: {
         type: Number
     },
     markedSponsoredBy: {
