@@ -76,15 +76,16 @@ router.post("/seller/products", async (req, res) => {
     // const mozDA = majesticData.mozDA || 0; // Extract Moz DA value
 
     // Fetch SEMRush DA data
-    const { data: semrushData } = await axios.get(
-      `${baseURL}/api/semrush-checker?url=${url}`
-    );
+    const { data: semrushData } = await axios.get(`${baseURL}/api/semrush-checker?url=${url}`);
     const semrushDA = semrushData.rank || 0; // Use the field name `da` from your response
 
-   // Fetch Ahrefs Domain Rating (DR) data
+    // Fetch Ahrefs Domain Rating (DR) data
    const { data: ahrefsDRData } = await axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`);
    const ahrefsDRrange = ahrefsDRData.domainRating || 0; // Use `domainRating` field from the response
 
+    //  Fetch Moz DA data
+    const { data: mozDAData } = await axios.get(`${baseURL}/api/moz-checker?url=${url}`);
+    const mozDA = mozDAData.rank || 0; 
     // Fetch Ahrefs Organic Traffic data
     //  const { data: ahrefsTrafficData } = await axios.get(`${baseURL}/api/ahref-traffic?url=${url}`);
     //  const ahrefsOrganicTraffic = ahrefsTrafficData.trafficMonthlyAvg || 0; // Use `traffic` field from the response
@@ -106,7 +107,7 @@ router.post("/seller/products", async (req, res) => {
       // majestic,
       markedSponsoredBy,
       taskDomainPrice,
-      // mozDA,
+      mozDA,
       semrushDA,
       ahrefsDRrange,
       seller: req.user.id,

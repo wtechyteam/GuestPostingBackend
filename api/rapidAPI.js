@@ -206,6 +206,15 @@ router.get('/ahrefs-authority', async (req, res) => {
 //     }
 // });
 
+
+
+
+
+//ACTUAL ROUTES START FROM HERE, THE ABOVE ONES ARE JUST FOR TESTING
+
+
+
+
 // **Route: Ahrefs DR Checker (using query params)**
 router.get('/ahrefs-dr-checker', async (req, res) => {
     const { url } = req.query; // Extract the URL from query parameters
@@ -279,6 +288,41 @@ router.get('/semrush-checker', async (req,res) => {
     } catch (error) {
         console.error('Error fetching semrush Data:', error.response ?  error.response.data : error.message);
         res.status(500).json({ error: 'Failed to fetch semrush data' });
+    }
+})
+
+router.get('/moz-checker', async (req,res) => {
+    const { url } = req.query;
+
+    if(!url){
+        return res.status(400).json({error: 'URL is required'});
+    }
+
+    try {
+        const response = await axios({
+            method: 'POST',
+            url: `https://seo-rank-checker.p.rapidapi.com/moz`,
+            headers: {
+                'x-rapidapi-key' : '770cdcf629msh8ac0af84d9825b2p1ba4fdjsn3e5df144492e',
+                'x-rapidapi-host': 'seo-rank-checker.p.rapidapi.com',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({ url })
+        });
+
+        const { success, data } = response.data;
+        const { moz } = data;
+        const { rank } = moz;
+
+        if(success) {
+            return res.status(200).json({ rank });
+        }
+        else {
+            return res.status(500).json({ error: 'Failed to retrieve MOZ rank'});
+        }
+    } catch (error) {
+        console.error('Error fetching semrush Data:', error.response ?  error.response.data : error.message);
+        res.status(500).json({ error: 'Failed to fetch MOZ data' });
     }
 })
 
