@@ -183,28 +183,28 @@ router.get('/ahrefs-authority', async (req, res) => {
 });
 
 // **New Route: SEMrush Traffic**
-router.get('/semrush-traffics', async (req, res) => {
-    const { url } = req.query; // Extract the URL parameter from the query string
-    if (!url) {
-        return res.status(400).json({ error: 'URL is required' });
-    }
+// router.get('/semrush-traffics', async (req, res) => {
+//     const { url } = req.query; // Extract the URL parameter from the query string
+//     if (!url) {
+//         return res.status(400).json({ error: 'URL is required' });
+//     }
 
-    try {
-        const response = await axios({
-            method: 'GET',
-            url: `https://semrush-traffic.p.rapidapi.com/url_traffic?url=${url}`, // Use the dynamic URL here
-            headers: {
-                'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
-                'x-rapidapi-host': 'semrush-traffic.p.rapidapi.com'
-            }
-        });
-        const {srRank} = response.data;
-        res.status(200).json({srRank}); // Send the SEMrush traffic data back as a JSON response
-    } catch (error) {
-        console.error('Error fetching SEMrush Traffic data:', error);
-        res.status(500).json({ error: 'Failed to fetch SEMrush Traffic data' });
-    }
-});
+//     try {
+//         const response = await axios({
+//             method: 'GET',
+//             url: `https://semrush-traffic.p.rapidapi.com/url_traffic?url=${url}`, // Use the dynamic URL here
+//             headers: {
+//                 'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
+//                 'x-rapidapi-host': 'semrush-traffic.p.rapidapi.com'
+//             }
+//         });
+//         const {srRank} = response.data;
+//         res.status(200).json({srRank}); // Send the SEMrush traffic data back as a JSON response
+//     } catch (error) {
+//         console.error('Error fetching SEMrush Traffic data:', error);
+//         res.status(500).json({ error: 'Failed to fetch SEMrush Traffic data' });
+//     }
+// });
 
 // **Route: Ahrefs DR Checker (using query params)**
 router.get('/ahrefs-dr-checker', async (req, res) => {
@@ -246,5 +246,40 @@ router.get('/ahrefs-dr-checker', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch Ahrefs DR data' });
     }
 });
+
+router.get('/semrush-checker', async (req,res) => {
+    const { url } = req.query;
+
+    if(!url){
+        return res.status(400).json({error: 'URL is required'});
+    }
+
+    try {
+        const response = await axios({
+            method: 'POST',
+            url: `https://seo-rank-checker.p.rapidapi.com/check`,
+            headers: {
+                'x-rapidapi-key': '770cdcf629msh8ac0af84d9825b2p1ba4fdjsn3e5df144492e',
+                'x-rapidapi-host': 'seo-rank-checker.p.rapidapi.com',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({ url })
+        });
+
+        const { success, data } = response.data;
+        const { semrush } = data;
+        const { rank } = semrush;
+
+        if(success) {
+            return res.status(200).json({ rank });
+        }
+        else {
+            return res.status(500).json({ error: 'Failed to retrieve SEMRUSH rank'});
+        }
+    } catch (error) {
+        console.error('Error fetching semrush Data:', error.response ?  error.response.data : error.message);
+        res.status(500).json({ error: 'Failed to fetch semrush data' });
+    }
+})
 
 module.exports = router;

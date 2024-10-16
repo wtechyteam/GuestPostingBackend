@@ -75,11 +75,11 @@ router.post("/seller/products", async (req, res) => {
     // const majestic = majesticData.majesticTF || 0; // Extract Majestic TF value
     // const mozDA = majesticData.mozDA || 0; // Extract Moz DA value
 
-    //Fetch SEMRush DA data
-    // const { data: semrushData } = await axios.get(
-    //   `${baseURL}/api/semrush-traffics?url=${url}`
-    // );
-    // const semrushDA = semrushData.srRank || 0; // Use the field name `da` from your response
+    // Fetch SEMRush DA data
+    const { data: semrushData } = await axios.get(
+      `${baseURL}/api/semrush-checker?url=${url}`
+    );
+    const semrushDA = semrushData.rank || 0; // Use the field name `da` from your response
 
    // Fetch Ahrefs Domain Rating (DR) data
    const { data: ahrefsDRData } = await axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`);
@@ -107,7 +107,7 @@ router.post("/seller/products", async (req, res) => {
       markedSponsoredBy,
       taskDomainPrice,
       // mozDA,
-      // semrushDA,
+      semrushDA,
       ahrefsDRrange,
       seller: req.user.id,
     });
