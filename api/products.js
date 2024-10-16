@@ -71,8 +71,9 @@ router.post("/seller/products", async (req, res) => {
     if (!url) {
         return res.status(400).json({ error: "URL is required" });
       }
-    // const { data: majesticData } = await axios.get(`${baseURL}/api/domain-metrics?domain=${domain}`);
-    // const majestic = majesticData.majesticTF || 0; // Extract Majestic TF value
+    //Fetch Majestic Data  
+    const { data: majesticData } = await axios.get(`${baseURL}/api/domain-metrics?url=${url}`);
+    const majestic = majesticData.majesticTF || 0; // Extract Majestic TF value
     // const mozDA = majesticData.mozDA || 0; // Extract Moz DA value
 
     // Fetch SEMRush DA data
@@ -86,9 +87,10 @@ router.post("/seller/products", async (req, res) => {
     //  Fetch Moz DA data
     const { data: mozDAData } = await axios.get(`${baseURL}/api/moz-checker?url=${url}`);
     const mozDA = mozDAData.rank || 0; 
+
     // Fetch Ahrefs Organic Traffic data
-    //  const { data: ahrefsTrafficData } = await axios.get(`${baseURL}/api/ahref-traffic?url=${url}`);
-    //  const ahrefsOrganicTraffic = ahrefsTrafficData.trafficMonthlyAvg || 0; // Use `traffic` field from the response
+     const { data: ahrefsTrafficData } = await axios.get(`${baseURL}/api/ahrefs-traffic?url=${url}`);
+     const ahrefsOrganicTraffic = ahrefsTrafficData.trafficMonthlyAvg || 0; // Use `traffic` field from the response
 
     const newProduct = new Products({
       URL,
@@ -103,8 +105,8 @@ router.post("/seller/products", async (req, res) => {
       writingAndPlacement,
       completionRate,
       avgLifetimeOfLinks,
-      // ahrefsOrganicTraffic,
-      // majestic,
+      ahrefsOrganicTraffic,
+      majestic,
       markedSponsoredBy,
       taskDomainPrice,
       mozDA,
@@ -130,9 +132,9 @@ router.post("/seller/products", async (req, res) => {
 //search api
 router.get("/products/search", async (req, res) => {
   try {
-    const { query, tags, language, country } = req.query;
+    const {query, URL, tags, language, country } = req.query;
 
-    console.log("Query Params:", { query, tags, language, country }); // Debug logging
+    console.log("Query Params:", { query, URL, tags, language, country }); // Debug logging
 
     const filter = {};
 
@@ -153,6 +155,9 @@ router.get("/products/search", async (req, res) => {
     }
     if (country) {
       filter.country = country;
+    }
+    if (URL) {
+      filter.URL = URL;
     }
 
     const products = await Products.find(filter);

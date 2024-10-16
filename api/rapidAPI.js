@@ -111,22 +111,22 @@ router.get('/majestic-data', async (req, res) => {
 });
 // **New Route: Domain Metrics**
 router.get('/domain-metrics', async (req, res) => {
-    const { domain } = req.query; // Extract the domain parameter from the query string
-    if (!domain) {
+    const { url } = req.query; // Extract the domain parameter from the query string
+    if (!url) {
         return res.status(400).json({ error: 'Domain is required' });
     }
 
     try {
         const response = await axios({
             method: 'GET',
-            url: `https://domain-metrics-check.p.rapidapi.com/domain-metrics/${domain}/`, // Use the dynamic domain value here
+            url: `https://domain-metrics-check.p.rapidapi.com/domain-metrics/${url}/`, // Use the dynamic domain value here
             headers: {
-                'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
+                'x-rapidapi-key': '770cdcf629msh8ac0af84d9825b2p1ba4fdjsn3e5df144492e',
                 'x-rapidapi-host': 'domain-metrics-check.p.rapidapi.com'
             }
         });
-        const { mozDA, majesticTF } = response.data;
-        res.status(200).json({ mozDA, majesticTF }); // Return the API response
+        const { majesticTF } = response.data;
+        res.status(200).json({ majesticTF }); // Return the API response
     } catch (error) {
         console.error('Error fetching Domain Metrics:', error);
         res.status(500).json({ error: 'Failed to fetch Domain Metrics data' });
@@ -145,7 +145,7 @@ router.get('/ahrefs-traffic', async (req, res) => {
             method: 'GET',
             url: `https://ahrefs2.p.rapidapi.com/traffic?url=${url}`, // Use the dynamic URL here
             headers: {
-                'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
+                'x-rapidapi-key': '770cdcf629msh8ac0af84d9825b2p1ba4fdjsn3e5df144492e',
                 'x-rapidapi-host': 'ahrefs2.p.rapidapi.com'
             }
         });
@@ -157,30 +157,30 @@ router.get('/ahrefs-traffic', async (req, res) => {
     }
 });
 
-// **New Route: Ahrefs Authority**
-router.get('/ahrefs-authority', async (req, res) => {
-    const { url } = req.query; // Extract the URL parameter from the query string
-    if (!url) {
-        return res.status(400).json({ error: 'URL is required' });
-    }
+// // **New Route: Ahrefs Authority**
+// router.get('/ahrefs-authority', async (req, res) => {
+//     const { url } = req.query; // Extract the URL parameter from the query string
+//     if (!url) {
+//         return res.status(400).json({ error: 'URL is required' });
+//     }
 
-    try {
-        const response = await axios({
-            method: 'GET',
-            url: `https://ahrefs2.p.rapidapi.com/authority?url=${url}`, // Use the dynamic URL here
-            headers: {
-                'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
-                'x-rapidapi-host': 'ahrefs2.p.rapidapi.com'
-            }
-        });
+//     try {
+//         const response = await axios({
+//             method: 'GET',
+//             url: `https://ahrefs2.p.rapidapi.com/authority?url=${url}`, // Use the dynamic URL here
+//             headers: {
+//                 'x-rapidapi-key': 'c03af74d49msh71f15fbbf4e3586p17a781jsnc08d45cea357',
+//                 'x-rapidapi-host': 'ahrefs2.p.rapidapi.com'
+//             }
+//         });
 
-        const { domainRating } = response.data;
-        res.status(200).json({ domainRating }); // Send the Ahrefs authority data back as a JSON response
-    } catch (error) {
-        console.error('Error fetching Ahrefs Authority data:', error);
-        res.status(500).json({ error: 'Failed to fetch Ahrefs Authority data' });
-    }
-});
+//         const { domainRating } = response.data;
+//         res.status(200).json({ domainRating }); // Send the Ahrefs authority data back as a JSON response
+//     } catch (error) {
+//         console.error('Error fetching Ahrefs Authority data:', error);
+//         res.status(500).json({ error: 'Failed to fetch Ahrefs Authority data' });
+//     }
+// });
 
 // **New Route: SEMrush Traffic**
 // router.get('/semrush-traffics', async (req, res) => {
