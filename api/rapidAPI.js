@@ -321,7 +321,7 @@ router.get('/moz-checker', async (req,res) => {
             return res.status(500).json({ error: 'Failed to retrieve MOZ rank'});
         }
     } catch (error) {
-        console.error('Error fetching semrush Data:', error.response ?  error.response.data : error.message);
+        console.error('Error fetching MOZ Data:', error.response ?  error.response.data : error.message);
         res.status(500).json({ error: 'Failed to fetch MOZ data' });
     }
 })

@@ -44,8 +44,6 @@ router.get('/products', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
-
-// Creating a product
 router.post("/seller/products", async (req, res) => {
   try {
     const {
@@ -66,32 +64,46 @@ router.post("/seller/products", async (req, res) => {
     } = req.body;
 
     const baseURL = "http://localhost:3001";
-
     const { domain, url } = req.query;
+
     if (!url) {
-        return res.status(400).json({ error: "URL is required" });
-      }
-    //Fetch Majestic Data  
-    const { data: majesticData } = await axios.get(`${baseURL}/api/domain-metrics?url=${url}`);
-    const majestic = majesticData.majesticTF || 0; // Extract Majestic TF value
-    // const mozDA = majesticData.mozDA || 0; // Extract Moz DA value
+      return res.status(400).json({ error: "URL is required" });
+    }
 
-    // Fetch SEMRush DA data
-    const { data: semrushData } = await axios.get(`${baseURL}/api/semrush-checker?url=${url}`);
-    const semrushDA = semrushData.rank || 0; // Use the field name `da` from your response
+    // Use Promise.allSettled to fetch data from all APIs concurrently
+    const [majesticRes, semrushRes, ahrefsDRRes, mozDARes, ahrefsTrafficRes] = await Promise.allSettled([
+      axios.get(`${baseURL}/api/domain-metrics?url=${url}`),
+      axios.get(`${baseURL}/api/semrush-checker?url=${url}`),
+      axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`),
+      axios.get(`${baseURL}/api/moz-checker?url=${url}`),
+      axios.get(`${baseURL}/api/ahrefs-traffic?url=${url}`),
+    ]);
 
-    // Fetch Ahrefs Domain Rating (DR) data
-   const { data: ahrefsDRData } = await axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`);
-   const ahrefsDRrange = ahrefsDRData.domainRating || 0; // Use `domainRating` field from the response
+    // Extract data from the responses or assign default values in case of failure
+    const majestic = majesticRes.status === 'fulfilled' ? majesticRes.value.data.majesticTF || 0 : 0;
+    const semrushDA = semrushRes.status === 'fulfilled' ? semrushRes.value.data.rank || 0 : 0;
+    const ahrefsDRrange = ahrefsDRRes.status === 'fulfilled' ? ahrefsDRRes.value.data.domainRating || 0 : 0;
+    const mozDA = mozDARes.status === 'fulfilled' ? mozDARes.value.data.rank || 0 : 0;
+    const ahrefsOrganicTraffic = ahrefsTrafficRes.status === 'fulfilled' ? ahrefsTrafficRes.value.data.trafficMonthlyAvg || 0 : 0;
 
-    //  Fetch Moz DA data
-    const { data: mozDAData } = await axios.get(`${baseURL}/api/moz-checker?url=${url}`);
-    const mozDA = mozDAData.rank || 0; 
+    // Log warnings for any failed API calls
+    if (majesticRes.status === 'rejected') {
+      console.warn("Failed to fetch Majestic Data:", majesticRes.reason);
+    }
+    if (semrushRes.status === 'rejected') {
+      console.warn("Failed to fetch SEMRush Data:", semrushRes.reason);
+    }
+    if (ahrefsDRRes.status === 'rejected') {
+      console.warn("Failed to fetch Ahrefs DR Data:", ahrefsDRRes.reason);
+    }
+    if (mozDARes.status === 'rejected') {
+      console.warn("Failed to fetch Moz DA Data:", mozDARes.reason);
+    }
+    if (ahrefsTrafficRes.status === 'rejected') {
+      console.warn("Failed to fetch Ahrefs Organic Traffic Data:", ahrefsTrafficRes.reason);
+    }
 
-    // Fetch Ahrefs Organic Traffic data
-     const { data: ahrefsTrafficData } = await axios.get(`${baseURL}/api/ahrefs-traffic?url=${url}`);
-     const ahrefsOrganicTraffic = ahrefsTrafficData.trafficMonthlyAvg || 0; // Use `traffic` field from the response
-
+    // Create new product
     const newProduct = new Products({
       URL,
       tags,
@@ -117,6 +129,7 @@ router.post("/seller/products", async (req, res) => {
 
     await newProduct.save();
 
+    // Add the product to the seller's profile
     const seller = await User.findById(req.user.id);
     seller.sellerProfile.products.push(newProduct._id);
     await seller.save();
@@ -128,6 +141,7 @@ router.post("/seller/products", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
 
 //search api
 router.get("/products/search", async (req, res) => {
