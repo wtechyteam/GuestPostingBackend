@@ -12,15 +12,15 @@ const productsSchema = new Schema({
         required: true
     },
     tags: {
-        type: String
+        type: [String]
     },
     language: {
         type: String,
-        required: true
+        // required: true
     },
     country: {
         type: String,
-        required: true
+        // required: true
     },
     pricing: {
         type: Number,
@@ -31,7 +31,8 @@ const productsSchema = new Schema({
         
     },
     links: {
-        type: Number
+        type: Number,
+
     },
     tat: {
         type: Number
@@ -40,6 +41,12 @@ const productsSchema = new Schema({
         type: Number
     },
     writingAndPlacement: {
+        type: Number
+    },
+    specialTopic:{
+        type: Number
+    },
+    extraContent:{
         type: Number
     },
     completionRate: {
@@ -55,7 +62,8 @@ const productsSchema = new Schema({
         type: Number
     },
     markedSponsoredBy: {
-        type: Boolean
+        type: Boolean,
+       
     },
     taskDomainPrice: {
         type: Number
@@ -68,12 +76,21 @@ const productsSchema = new Schema({
     },
     ahrefsDRrange: {
         type: String
+    },
+    requirements:{
+        type:String
+    },
+    buyingBuyerArticle:{
+        type:Boolean
+    },
+    workExamples:{
+        type:String
     }
+    
 
 }, { timestamps: true });
 
-// Adding full-text search index
-productsSchema.index({ URL: 'text', tags: 'text', language: 'text', country: 'text', ahrefsDRrange: 'text' });
+
 
 const Products = model('Products', productsSchema);
 

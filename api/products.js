@@ -21,115 +21,105 @@ const axios = require("axios");
 router.use(checkForAuthenticationCookie("token"));
 
 // Get all products from all users
-router.get('/products', async (req, res) => {
-    const { query, tags, language, country } = req.query;
-  
-    let filters = {};
-  
-    if (query) filters.productName = { $regex: query, $options: "i" }; // Case-insensitive search
-    if (tags) filters.tags = { $in: tags.split(',') }; // Assuming tags is a comma-separated string
-    if (language) filters.language = language;
-    if (country) filters.country = country;
-  
-    const products = await Products.find(filters);
-    res.json(products);
-  });
+router.get("/products", async (req, res) => {
+  const { query, tags, language, country } = req.query;
+
+  let filters = {};
+
+  if (query) filters.productName = { $regex: query, $options: "i" }; // Case-insensitive search
+  if (tags) filters.tags = { $in: tags.split(",") }; // Assuming tags is a comma-separated string
+  if (language) filters.language = language;
+  if (country) filters.country = country;
+
+  const products = await Products.find(filters);
+  res.json(products);
+});
 
 // Get all products from all users
-router.get('/products', async (req, res) => {
-    try {
-        const products = await Products.find();
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(500).send({ error: error.message });
-    }
+router.get("/products", async (req, res) => {
+  try {
+    const products = await Products.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
 });
+
 router.post("/seller/products", async (req, res) => {
   try {
+    const { domain, URL } = req.query;
     const {
-      URL,
-      tags,
       language,
-      country,
-      pricing,
+      markedSponsoredBy,
+      tags,
+      requirements,
+      buyingBuyerArticle,
+      workExamples,
       contentSize,
-      links,
-      tat,
       contentPlacement,
       writingAndPlacement,
-      completionRate,
-      avgLifetimeOfLinks,
-      markedSponsoredBy,
-      taskDomainPrice,
+      extraContent,
+      specialTopic,
     } = req.body;
 
-    const baseURL = "http://localhost:3001";
-    const { domain, url } = req.query;
-
-    if (!url) {
+    if (!URL) {
       return res.status(400).json({ error: "URL is required" });
     }
 
-    // Use Promise.allSettled to fetch data from all APIs concurrently
-    const [majesticRes, semrushRes, ahrefsDRRes, mozDARes, ahrefsTrafficRes] = await Promise.allSettled([
-      axios.get(`${baseURL}/api/domain-metrics?url=${url}`),
-      axios.get(`${baseURL}/api/semrush-checker?url=${url}`),
-      axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`),
-      axios.get(`${baseURL}/api/moz-checker?url=${url}`),
-      axios.get(`${baseURL}/api/ahrefs-traffic?url=${url}`),
-    ]);
+    const baseURL = "http://localhost:3001";
 
-    // Extract data from the responses or assign default values in case of failure
-    const majestic = majesticRes.status === 'fulfilled' ? majesticRes.value.data.majesticTF || 0 : 0;
-    const semrushDA = semrushRes.status === 'fulfilled' ? semrushRes.value.data.rank || 0 : 0;
-    const ahrefsDRrange = ahrefsDRRes.status === 'fulfilled' ? ahrefsDRRes.value.data.domainRating || 0 : 0;
-    const mozDA = mozDARes.status === 'fulfilled' ? mozDARes.value.data.rank || 0 : 0;
-    const ahrefsOrganicTraffic = ahrefsTrafficRes.status === 'fulfilled' ? ahrefsTrafficRes.value.data.trafficMonthlyAvg || 0 : 0;
+    // // Fetch metrics concurrently
+    // const [majesticRes, semrushRes, ahrefsDRRes, mozDARes, ahrefsTrafficRes] =
+    //   await Promise.allSettled([
+    //     axios.get(`${baseURL}/api/domain-metrics?url=${url}`),
+    //     axios.get(`${baseURL}/api/semrush-checker?url=${url}`),
+    //     axios.get(`${baseURL}/api/ahrefs-dr-checker?url=${url}`),
+    //     axios.get(`${baseURL}/api/moz-checker?url=${url}`),
+    //     axios.get(`${baseURL}/api/ahrefs-traffic?url=${url}`),
+    //   ]);
 
-    // Log warnings for any failed API calls
-    if (majesticRes.status === 'rejected') {
-      console.warn("Failed to fetch Majestic Data:", majesticRes.reason);
-    }
-    if (semrushRes.status === 'rejected') {
-      console.warn("Failed to fetch SEMRush Data:", semrushRes.reason);
-    }
-    if (ahrefsDRRes.status === 'rejected') {
-      console.warn("Failed to fetch Ahrefs DR Data:", ahrefsDRRes.reason);
-    }
-    if (mozDARes.status === 'rejected') {
-      console.warn("Failed to fetch Moz DA Data:", mozDARes.reason);
-    }
-    if (ahrefsTrafficRes.status === 'rejected') {
-      console.warn("Failed to fetch Ahrefs Organic Traffic Data:", ahrefsTrafficRes.reason);
-    }
+    // const majestic =
+    //   majesticRes.status === "fulfilled"
+    //     ? majesticRes.value.data.majesticTF || 0
+    //     : 0;
+    // const semrushDA =
+    //   semrushRes.status === "fulfilled" ? semrushRes.value.data.rank || 0 : 0;
+    // const ahrefsDRrange =
+    //   ahrefsDRRes.status === "fulfilled"
+    //     ? ahrefsDRRes.value.data.domainRating || 0
+    //     : 0;
+    // const mozDA =
+    //   mozDARes.status === "fulfilled" ? mozDARes.value.data.rank || 0 : 0;
+    // const ahrefsOrganicTraffic =
+    //   ahrefsTrafficRes.status === "fulfilled"
+    //     ? ahrefsTrafficRes.value.data.trafficMonthlyAvg || 0
+    //     : 0;
 
-    // Create new product
+    // const {URL} = req.body;
+
     const newProduct = new Products({
       URL,
-      tags,
       language,
-      country,
-      pricing,
+      markedSponsoredBy,
+      tags,
+      requirements,
+      buyingBuyerArticle,
+      workExamples,
       contentSize,
-      links,
-      tat,
       contentPlacement,
       writingAndPlacement,
-      completionRate,
-      avgLifetimeOfLinks,
-      ahrefsOrganicTraffic,
-      majestic,
-      markedSponsoredBy,
-      taskDomainPrice,
-      mozDA,
-      semrushDA,
-      ahrefsDRrange,
+      extraContent,
+      specialTopic,
+      // ahrefsOrganicTraffic,
+      // majestic,
+      // mozDA,
+      // semrushDA,
+      // ahrefsDRrange,
       seller: req.user.id,
     });
 
     await newProduct.save();
 
-    // Add the product to the seller's profile
     const seller = await User.findById(req.user.id);
     seller.sellerProfile.products.push(newProduct._id);
     await seller.save();
@@ -137,16 +127,15 @@ router.post("/seller/products", async (req, res) => {
     console.log("Product created successfully");
     res.send(newProduct);
   } catch (error) {
-    console.error('Error creating product:', error.message);
+    console.error("Error creating product:", error.message);
     res.status(500).send({ error: error.message });
   }
 });
 
-
 //search api
 router.get("/products/search", async (req, res) => {
   try {
-    const {query, URL, tags, language, country } = req.query;
+    const { query, URL, tags, language, country } = req.query;
 
     console.log("Query Params:", { query, URL, tags, language, country }); // Debug logging
 
@@ -249,6 +238,22 @@ router.get(
     }
   }
 );
+router.get("/products/seller/:sellerId", async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+    const products = await Products.find({ sellerId: sellerId }).populate(
+      "productId buyerId"
+    );
+    if (products.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found for this seller" });
+    }
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // //wishlist products api
 // router.post('/wishlist/:productId', checkForAuthenticationCookie('authToken'), addToWishlist);
