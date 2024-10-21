@@ -60,6 +60,9 @@ router.post("/seller/products", async (req, res) => {
       writingAndPlacement,
       extraContent,
       specialTopic,
+      priceForLinks,
+      links,
+      contentTypes,
     } = req.body;
 
     if (!URL) {
@@ -110,6 +113,9 @@ router.post("/seller/products", async (req, res) => {
       writingAndPlacement,
       extraContent,
       specialTopic,
+      priceForLinks,
+      links,
+      contentTypes,
       // ahrefsOrganicTraffic,
       // majestic,
       // mozDA,

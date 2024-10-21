@@ -31,7 +31,7 @@ const productsSchema = new Schema({
         
     },
     links: {
-        type: Number,
+        type: String,
 
     },
     tat: {
@@ -85,6 +85,12 @@ const productsSchema = new Schema({
     },
     workExamples:{
         type:String
+    },
+    priceForLinks:{
+        type:Number
+    },
+    contentTypes:{
+        type: [String],
     }
     
 
