@@ -247,8 +247,8 @@ router.get(
 router.get("/products/seller/:sellerId", async (req, res) => {
   try {
     const { sellerId } = req.params;
-    const products = await Products.find({ sellerId: sellerId }).populate(
-      "productId buyerId"
+    const products = await Products.find({ seller: sellerId }).populate(
+      "seller"
     );
     if (products.length === 0) {
       return res
