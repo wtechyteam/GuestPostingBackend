@@ -133,9 +133,15 @@ router.post("/seller/products", async (req, res) => {
     console.log("Product created successfully");
     res.send(newProduct);
   } catch (error) {
-    console.error("Error creating product:", error.message);
-    res.status(500).send({ error: error.message });
+  if (error.response) {
+    console.error("Server responded with an error:", error.response.data);
+    console.error("Status code:", error.response.status);
+  } else if (error.request) {
+    console.error("No response from server:", error.request);
+  } else {
+    console.error("Error setting up request:", error.message);
   }
+}
 });
 
 //search api
